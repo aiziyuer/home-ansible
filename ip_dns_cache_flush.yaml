@@ -10,4 +10,4 @@
   - debug: var=result.stdout_lines
   - community.routeros.command:
       commands:
-        - /system resource print
+        - /ip dns cache flush
