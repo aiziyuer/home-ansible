@@ -28,3 +28,11 @@ Host *
 EOF
 
 ```
+
+### 样例运行
+
+``` bash
+# 清理ros的dns
+ansible-playbook -i inventory/default.ini --extra-vars 'ansible_ssh_pass=xxxx' ip_dns_cache_flush.yaml
+
+```
