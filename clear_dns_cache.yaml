@@ -1,0 +1,13 @@
+---
+- name: RouterOS test with network_cli connection
+  hosts: ros
+  gather_facts: false
+  tasks:
+  - community.routeros.command:
+      commands:
+        - /ip dns cache print without-paging
+    register: result
+  - debug: var=result.stdout_lines
+  - community.routeros.command:
+      commands:
+        - /system resource print

@@ -1,3 +1,6 @@
 inventory
 !inventory/.gitkeep
+!inventory/default.ini
 *.pyc
+log
+!log/.gitkeep
