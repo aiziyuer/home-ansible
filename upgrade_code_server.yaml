@@ -9,6 +9,10 @@
           | jq -rc '.assets[].browser_download_url' \
           | grep 'amd64.rpm' \
           | xargs -n1 -I{} yum install -y {}
+      register: result
+    - debug:
+        var: result
+        verbosity: 2
     - name: restart code server
       systemd:
         name: code-server@root
