@@ -1,0 +1,17 @@
+---
+# ansible-playbook -i inventory/default.ini --extra-vars 'ansible_ssh_pass=xxxx' upgrade_code_server.yaml
+- name: upgrade code_server version
+  hosts: code_server
+  gather_facts: false
+  tasks:
+    - shell: |
+        curl -s https://api.github.com/repos/cdr/code-server/releases/latest \
+          | jq -rc '.assets[].browser_download_url' \
+          | grep 'amd64.rpm' \
+          | xargs -n1 -I{} yum install -y {}
+    - name: restart code server
+      systemd:
+        name: code-server@root
+        daemon_reload: yes
+        state: restarted
+        enabled: yes
