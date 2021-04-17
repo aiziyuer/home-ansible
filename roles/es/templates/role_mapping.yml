@@ -6,7 +6,13 @@
 #  - groupB-DN
 #  - user1-DN   this is the full user distinguished name
 
-power_user:
+superuser:
   - "cn=home-admin,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
+
+monitoring:
+  - "cn=home-admin,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
+  - "cn=users,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
+
 user:
   - "cn=users,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
+  - "cn=home-admin,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
