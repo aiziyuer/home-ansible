@@ -1,7 +1,7 @@
 {
   "files.associations": {
     // ansible 配置, 参考: https://selivan.github.io/2018/09/27/vscode-ansible-files-open-right-syntax.html
-    // 插件：better jinja2, Ansible, language-Ansible
+    // 插件：better jinja2, language-Ansible
     "**/defaults/**/*.yml": "jinja-yaml",
     "**/group_vars/**/*": "jinja-yaml",
     "**/host_vars/**/*": "jinja-yaml",
