@@ -5,6 +5,12 @@
   roles:
     - { role: es, tags: es }
 
+- hosts: es
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: kibana, tags: kibana }
+
 - hosts: logstash
   gather_facts: yes
   become: yes

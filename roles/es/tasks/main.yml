@@ -33,6 +33,11 @@
     - { name: "net.ipv6.conf.default.disable_ipv6", value: "1" }
     - { name: "net.ipv6.conf.lo.disable_ipv6", value: "1" }
 
+- name: install pakcage
+  apt:
+    pkg:
+      - elasticsearch
+
 - name: copy templates
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode | default('0644')}}
   with_items:
@@ -41,6 +46,7 @@
         dest: "/etc/elasticsearch/elasticsearch.yml",
       }
     - { src: role_mapping.yml, dest: "/etc/elasticsearch/role_mapping.yml" }
+    - { src: roles.yml, dest: "/etc/elasticsearch/roles.yml" }
 
 - name: copy files
   copy: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode | default('0644')}}

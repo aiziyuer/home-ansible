@@ -1,0 +1,27 @@
+---
+
+- name: ensures etcd dirs
+  file: path={{ item }} state=directory
+  with_items:
+    - /etc/systemd/system
+
+- name: install pakcage
+  apt:
+    pkg:
+      - kibana
+
+- name: copy templates
+  template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode | default('0644')}}
+  with_items:
+    - {
+        src: kibana.yml,
+        dest: "/etc/kibana/kibana.yml",
+      }
+
+- name: restart service
+  systemd:
+    name: kibana
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+
