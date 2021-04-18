@@ -8,11 +8,11 @@
 
 superuser:
   - "cn=home-admin,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
+  - "cn=administrators,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
 
 monitoring:
   - "cn=home-admin,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
   - "cn=users,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
 
-user:
-  - "cn=users,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
-  - "cn=home-admin,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
+logstash_writer:
+  - uid=elk-logstash,cn=users,dc=aiziyuer,dc=familyds,dc=com

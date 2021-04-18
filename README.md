@@ -35,4 +35,11 @@ EOF
 # 清理ros的dns
 ansible-playbook -i inventory/default.ini --extra-vars 'ansible_ssh_pass=xxxx' ip_dns_cache_flush.yaml
 
+
+# 密钥生成
+openssl rand -base64 128 | tee ~/.vault_password_file
+
+# 加密字串
+ansible-vault encrypt_string 'mypass'
+
 ```

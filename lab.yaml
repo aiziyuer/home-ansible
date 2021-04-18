@@ -4,3 +4,9 @@
   become: yes
   roles:
     - { role: es, tags: es }
+
+- hosts: logstash
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: logstash, tags: logstash }
