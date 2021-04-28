@@ -4,6 +4,7 @@
   with_items:
     - /tmp/repository/
     - ~/iso
+    - ~/CentOS7-OS_x86_64/MY-PXE
 
 - name: download all
   shell: |
@@ -21,6 +22,94 @@
   shell: |
     mkdir -p ~/iso 
     mount /tmp/repository/CentOS.iso ~/iso
-    rsync -avz ~/iso/ moyi@10.10.10.114:/volume1/documents/Centos7-PXE/
+    rsync -avz ~/iso/ ~/CentOS7-OS_x86_64/
     umount ~/iso
+    rsync -avz /usr/share/syslinux/ ~/CentOS7-OS_x86_64/MY-PXE/
+
+- name: create ks
+  shell: |
+    cat <<'EOF'>~/CentOS7-OS_x86_64/MY-PXE/ks.cfg
+    #version=CentOS7
+    # Install OS instead of upgrade
+    install
+    # System authorisation information
+    auth --enableshadow --passalgo=sha512
+    # Use network installation
+    url --url="10.10.10.114:30003/mirror.centos.org/os/x86_64/"
+    # Use graphical install
+    graphical
+    # Keyboard layouts
+    keyboard --vckeymap=gb --xlayouts='gb'
+    # System language
+    lang en_GB.UTF-8
+    # SELinux configuration
+    selinux --enforcing
+    # Firewall configuration
+    firewall --enabled --ssh
+    firstboot --disable
+
+    # Network information
+    network  --bootproto=dhcp --device=eth0 --nameserver=10.10.10.1 --noipv6 --activate
+    # Reboot after installation
+    reboot
+    ignoredisk --only-use=vda
+
+    # Root password
+    rootpw --iscrypted $6$7YZ0gnLkLPrl6rRO$NTjTQx1nesw5JLjtiAVdn3UBSbahUBGDFSiGGfrMNfGBum5aFs.TQcNX1SEuoWX/TmQ/ZMfiMnyHDs9uu9VH9.
+    # System services
+    services --enabled="chronyd"
+    # System timezone
+    timezone Europe/London --isUtc
+    # System bootloader configuration
+    bootloader --location=mbr --timeout=1 --boot-drive=vda
+    # Clear the Master Boot Record
+    zerombr
+    # Partition clearing information
+    clearpart --all --initlabel
+
+    # Disk partitioning information
+    part /boot --fstype="xfs" --ondisk=vda --size=1024 --label=boot --asprimary
+    part pv.01 --fstype="lvmpv" --ondisk=vda --size=15359
+    volgroup vg_os pv.01
+    logvol /tmp  --fstype="xfs" --size=1024 --label="lv_tmp" --name=lv_tmp --vgname=vg_os
+    logvol /  --fstype="xfs" --size=14331 --label="lv_root" --name=lv_root --vgname=vg_os
+
+    %packages
+    @^minimal
+    @core
+    chrony
+
+    %end
+
+    %addon com_redhat_kdump --disable --reserve-mb='auto'
+
+    %end
+
+    %anaconda
+    pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+    pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
+    pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+    %end
+    EOF
+
+- name: create pxelinux.cfg
+  shell: |
+    mkdir -p ~/CentOS7-OS_x86_64/MY-PXE/pxelinux.cfg
+    cp ~/CentOS7-OS_x86_64/ ~/CentOS7-OS_x86_64/MY-PXE
+    cp -pv ~/CentOS7-OS_x86_64/images/pxeboot/{initrd.img,vmlinuz} ~/CentOS7-OS_x86_64/MY-PXE
+    cat <<'EOF'>~/CentOS7-OS_x86_64/MY-PXE/pxelinux.cfg/default
+    default menu.c32
+    prompt 0
+    timeout 30
+    menu title Homelab PXE Menu
+    label Install CentOS 7 Server
+      kernel /vmlinuz
+      append initrd=/initrd.img inst.repo=10.10.10.114:30003/mirror.centos.org/os/x86_64/ ks=10.10.10.114:30003/mirror.centos.org/os/x86_64/MY-PXE/ks.cfg
+    EOF
+
+- name: rsync...
+  shell: |
+    rsync -avz ~/CentOS7-OS_x86_64/ moyi@10.10.10.114:/volume1/docker/download.aiziyuer.familyds.com/data/mirror.centos.org/os/x86_64/
+
+
 
