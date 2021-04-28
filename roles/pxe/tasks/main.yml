@@ -30,13 +30,13 @@
     cat <<'EOF'>~/CentOS7-OS_x86_64/MY-PXE/ks.cfg
     lang en_US
     keyboard us
-    timezone America/New_York --isUtc
+    timezone Aisa/Shanghai
     rootpw $1$2Xb7M2dX$TwMDmYgnlGhfiCMYU9xww1 --iscrypted
-    #platform x86, AMD64, or Intel EM64T
     reboot
     text
     url --url=http://10.10.10.114:30003/mirror.centos.org/os/x86_64
     bootloader --location=mbr --append="rhgb quiet crashkernel=auto"
+    network  --bootproto=dhcp --onboot=on --noipv6 --no-activate
     zerombr
     clearpart --all --initlabel
     autopart
