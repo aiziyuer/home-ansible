@@ -29,59 +29,51 @@
 - name: create ks
   shell: |
     cat <<'EOF'>~/CentOS7-OS_x86_64/MY-PXE/ks.cfg
-    #version=CentOS7
-    # Install OS instead of upgrade
-    install
-    # System authorisation information
+    #version=DEVEL
+    # System authorization information
     auth --enableshadow --passalgo=sha512
-    # Use network installation
-    url --url="10.10.10.114:30003/mirror.centos.org/os/x86_64/"
+    # Use CDROM installation media
+    cdrom
     # Use graphical install
-    graphical
+    text
+    # Run the Setup Agent on first boot
+    firstboot --enable
+    ignoredisk --only-use=sda
     # Keyboard layouts
-    keyboard --vckeymap=gb --xlayouts='gb'
+    keyboard --vckeymap=us --xlayouts='us'
     # System language
-    lang en_GB.UTF-8
-    # SELinux configuration
-    selinux --enforcing
-    # Firewall configuration
-    firewall --enabled --ssh
-    firstboot --disable
+    lang en_US.UTF-8
 
     # Network information
-    network  --bootproto=dhcp --device=eth0 --nameserver=10.10.10.1 --noipv6 --activate
-    # Reboot after installation
-    reboot
-    ignoredisk --only-use=vda
+    network  --bootproto=dhcp --onboot=on --noipv6 --no-activate
+    network  --hostname=localhost.localdomain
 
     # Root password
-    rootpw --iscrypted $6$7YZ0gnLkLPrl6rRO$NTjTQx1nesw5JLjtiAVdn3UBSbahUBGDFSiGGfrMNfGBum5aFs.TQcNX1SEuoWX/TmQ/ZMfiMnyHDs9uu9VH9.
+    rootpw --iscrypted $6$AN4MBBii5LT4V4z5$zqGKKz1fBqZxNAc3ltbOzlz.8f/gjttgNEAsUiA6TTh2fI3cEvGZszlQq7GC3ItgLpnodkKHDLS5zuEoGbKfX0
     # System services
     services --enabled="chronyd"
     # System timezone
-    timezone Europe/London --isUtc
+    timezone America/New_York --isUtc
     # System bootloader configuration
-    bootloader --location=mbr --timeout=1 --boot-drive=vda
-    # Clear the Master Boot Record
-    zerombr
+    bootloader --append=" crashkernel=auto" --location=mbr --boot-drive=sda
     # Partition clearing information
-    clearpart --all --initlabel
-
+    clearpart --none --initlabel
     # Disk partitioning information
-    part /boot --fstype="xfs" --ondisk=vda --size=1024 --label=boot --asprimary
-    part pv.01 --fstype="lvmpv" --ondisk=vda --size=15359
-    volgroup vg_os pv.01
-    logvol /tmp  --fstype="xfs" --size=1024 --label="lv_tmp" --name=lv_tmp --vgname=vg_os
-    logvol /  --fstype="xfs" --size=14331 --label="lv_root" --name=lv_root --vgname=vg_os
+    part pv.156 --fstype="lvmpv" --ondisk=sda --size=15359
+    part /boot --fstype="xfs" --ondisk=sda --size=1024
+    volgroup centos --pesize=4096 pv.156
+    logvol /  --fstype="xfs" --grow --maxsize=51200 --size=1024 --name=root --vgname=centos
+    logvol swap  --fstype="swap" --size=1638 --name=swap --vgname=centos
 
     %packages
     @^minimal
     @core
     chrony
+    kexec-tools
 
     %end
 
-    %addon com_redhat_kdump --disable --reserve-mb='auto'
+    %addon com_redhat_kdump --enable --reserve-mb='auto'
 
     %end
 
