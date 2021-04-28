@@ -46,8 +46,10 @@
     skipx
     firstboot --disable
     %packages
-    @^compute-node-environment
-    @base
+    @^minimal  
+    @core  
+    chrony  
+    kexec-tools 
     %end
     EOF
 
@@ -62,8 +64,8 @@
     timeout 30
     menu title Homelab PXE Menu
     label Install CentOS 7 Server
-      linuxefi /vmlinuz
-      initrdefi /initrd.img inst.repo=10.10.10.114:30003/mirror.centos.org/os/x86_64/ inst.ks=10.10.10.114:30003/mirror.centos.org/os/x86_64/MY-PXE/ks.cfg
+      kernel /vmlinuz
+      append initrd=/initrd.img ip=dhcp method=http://10.10.10.114:30003/mirror.centos.org/os/x86_64 devfs=nomount inst.repo=http://10.10.10.114:30003/mirror.centos.org/os/x86_64 inst.ks=http://10.10.10.114:30003/mirror.centos.org/os/x86_64/MY-PXE/ks.cfg
     EOF
 
 - name: rsync...
