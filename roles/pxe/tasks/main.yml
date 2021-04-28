@@ -20,10 +20,9 @@
 
 - name: unarchive iso
   shell: |
-    mkdir -p ~/iso 
+    umount ~/iso || true
+    mkdir -p ~/iso
     mount /tmp/repository/CentOS.iso ~/iso
-    rsync -avz ~/iso/ ~/CentOS7-OS_x86_64/
-    umount ~/iso
     rsync -avz /usr/share/syslinux/ ~/CentOS7-OS_x86_64/MY-PXE/
 
 - name: create ks
@@ -56,19 +55,20 @@
   shell: |
     mkdir -p ~/CentOS7-OS_x86_64/MY-PXE/pxelinux.cfg
     cp ~/CentOS7-OS_x86_64/ ~/CentOS7-OS_x86_64/MY-PXE
-    cp -pv ~/CentOS7-OS_x86_64/images/pxeboot/{initrd.img,vmlinuz} ~/CentOS7-OS_x86_64/MY-PXE
+    cp -pv ~/iso/images/pxeboot/{initrd.img,vmlinuz} ~/CentOS7-OS_x86_64/MY-PXE
     cat <<'EOF'>~/CentOS7-OS_x86_64/MY-PXE/pxelinux.cfg/default
     default menu.c32
     prompt 0
     timeout 30
     menu title Homelab PXE Menu
     label Install CentOS 7 Server
-      kernel /vmlinuz
-      append initrd=/initrd.img inst.repo=10.10.10.114:30003/mirror.centos.org/os/x86_64/ ks=10.10.10.114:30003/mirror.centos.org/os/x86_64/MY-PXE/ks.cfg
+      linuxefi /vmlinuz
+      initrdefi /initrd.img inst.repo=10.10.10.114:30003/mirror.centos.org/os/x86_64/ inst.ks=10.10.10.114:30003/mirror.centos.org/os/x86_64/MY-PXE/ks.cfg
     EOF
 
 - name: rsync...
   shell: |
+    rsync -avz ~/iso/ moyi@10.10.10.114:/volume1/docker/download.aiziyuer.familyds.com/data/mirror.centos.org/os/x86_64/
     rsync -avz ~/CentOS7-OS_x86_64/ moyi@10.10.10.114:/volume1/docker/download.aiziyuer.familyds.com/data/mirror.centos.org/os/x86_64/
 
 
