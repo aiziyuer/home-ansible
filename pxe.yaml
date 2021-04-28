@@ -1,0 +1,6 @@
+---
+- hosts: code_server
+  gather_facts: yes
+  become: no
+  roles:
+    - { role: pxe, tags: pxe }

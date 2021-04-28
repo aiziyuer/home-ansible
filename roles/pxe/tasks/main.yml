@@ -1,0 +1,26 @@
+---
+- name: ensures etcd dirs
+  file: path={{ item }} state=directory
+  with_items:
+    - /tmp/repository/
+    - ~/iso
+
+- name: download all
+  shell: |
+    while echo '{{ item.sha256sum }} {{ item.dest }}' | sha256sum --check --status &>/dev/null; [ $? -ne 0 ]; do 
+        curl -sSL {{ binaries_mirror }}/{{ item.sha256sum }} -o {{ item.dest }} || curl -sSL {{ item.url }} -o {{ item.dest }}; 
+    done
+  with_items:
+    - {
+        dest: "/tmp/repository/{{ binaries['centos']['name'] }}",
+        sha256sum: "{{ binaries['centos']['versions']['7']['sha256sum'] }}",
+        url: "{{ binaries['centos']['versions']['7']['url'] }}",
+      }
+
+- name: unarchive iso
+  shell: |
+    mkdir -p ~/iso 
+    mount /tmp/repository/CentOS.iso ~/iso
+    rsync -avz ~/iso/ moyi@10.10.10.114:/volume1/documents/Centos7-PXE/
+    umount ~/iso
+

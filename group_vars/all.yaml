@@ -19,3 +19,15 @@ LADP_DIND_DN_PASSWD: !vault |
   39323335623035626235303733383436666261653531346466393763353239656330643862376439
   3039663231653562360a663062303361663761656161306164386162366164383033646637623238
   6463
+
+
+binaries_mirror: "https://download.aiziyuer.familyds.com:5001/blob/sha256sum"
+
+binaries:
+  centos:
+    name: CentOS.iso
+    versions:
+      "7":
+        sha256sum: "07b94e6b1a0b0260b94c83d6bb76b26bf7a310dc78d7a9c7432809fb9bc6194a"
+        url: "https://mirrors.aliyun.com/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso"
+
