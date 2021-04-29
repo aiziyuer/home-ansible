@@ -3,7 +3,7 @@
   file: path={{ item }} state=directory
   with_items:
     - /tmp/repository/
-    - ~/iso
+    - ~/iso-centos7
 
 - name: download all
   shell: |
@@ -36,19 +36,18 @@
 - name: sync file files
   copy: src={{ item.src }} dest="~/{{ item.path }}" 
   with_filetree:
-    - "../templates/"
+    - "../files/"
   when: item.state == 'file'
 
 - name: copy centos7 os
   shell: |
-    umount ~/iso || true
-    mount /tmp/repository/CentOS.iso ~/iso || true
-    cp -pv ~/iso/images/pxeboot/{initrd.img,vmlinuz} ~/PXE-BOOT/os/centos7
+    umount ~/iso-centos7 || true
+    mount /tmp/repository/CentOS.iso ~/iso-centos7 || true
+    cp -pv ~/iso-centos7/images/pxeboot/{initrd.img,vmlinuz} ~/PXE-BOOT/os/centos7
 
 - name: rsync...
   shell: |
-    rsync -avz ~/iso/ moyi@10.10.10.114:/volume1/docker/download.aiziyuer.familyds.com/data/mirror.centos.org/os/x86_64/
+    #rsync -avz ~/iso-centos7/ moyi@10.10.10.114:/volume1/docker/download.aiziyuer.familyds.com/data/mirror.centos.org/os/x86_64/
     rsync -avz ~/PXE-BOOT moyi@10.10.10.114:/volume1/public/
-
-
+    rsync -avz ~/iso-centos7 moyi@10.10.10.114:/volume1/public/
 
