@@ -1,0 +1,7 @@
+default menu.c32
+prompt 0
+timeout 30
+menu Title Homelab PXE Menu
+label Install CentOS 7-minimal
+    kernel /os/centos7/vmlinuz
+    append initrd=/os/centos7/initrd.img text inst.ks=nfs:10.10.10.114/volume1/public/PXE-BOOT/ks/centos7-ks.cfg
