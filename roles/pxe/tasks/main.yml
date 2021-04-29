@@ -47,7 +47,6 @@
 
 - name: rsync...
   shell: |
-    #rsync -avz ~/iso-centos7/ moyi@10.10.10.114:/volume1/docker/download.aiziyuer.familyds.com/data/mirror.centos.org/os/x86_64/
     rsync -avz ~/PXE-BOOT moyi@10.10.10.114:/volume1/public/
     rsync -avz ~/iso-centos7 moyi@10.10.10.114:/volume1/public/
 
