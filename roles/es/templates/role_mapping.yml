@@ -7,12 +7,17 @@
 #  - user1-DN   this is the full user distinguished name
 
 superuser:
-  - "cn=home-admin,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
-  - "cn=administrators,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
+{% for group in LADAP_ADMIN_GROUPS %}
+  - "{{ group }}"
+{% endfor %}
 
 monitoring:
-  - "cn=home-admin,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
-  - "cn=users,cn=groups,dc=aiziyuer,dc=familyds,dc=com"
+{% for group in LADAP_ADMIN_GROUPS %}
+  - "{{ group }}"
+{% endfor %}
+{% for group in LDAP_USER_GROUPS %}
+  - "{{ group }}"
+{% endfor %}
 
 logstash_writer:
   - uid=elk-logstash,cn=users,dc=aiziyuer,dc=familyds,dc=com

@@ -16,14 +16,14 @@ xpack:
         ldap:
           ldap1:
             order: 0
-            url: "ldap://aiziyuer.familyds.com:389"
-            bind_dn: "uid=root,cn=users,dc=aiziyuer,dc=familyds,dc=com"
+            url: "{{ LDAP_URL }}"
+            bind_dn: "{{ LDAP_DIND_DN }}"
             bind_password: "{{ LADP_DIND_DN_PASSWD }}"
             user_search:
-              base_dn: "dc=aiziyuer,dc=familyds,dc=com"
+              base_dn: "{{ LDAP_USER_SEARCH }}"
               filter: "(cn={0})"
             group_search:
-              base_dn: "dc=aiziyuer,dc=familyds,dc=com"
+              base_dn: "{{ LDAP_GROUP_SEARCH }}"
             files:
               role_mapping: "/etc/elasticsearch/role_mapping.yml"
             unmapped_groups_as_roles: false

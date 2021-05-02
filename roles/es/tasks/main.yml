@@ -33,10 +33,32 @@
     - { name: "net.ipv6.conf.default.disable_ipv6", value: "1" }
     - { name: "net.ipv6.conf.lo.disable_ipv6", value: "1" }
 
-- name: install pakcage
+- name: install pakcage(Debian)
+  when:
+    - ansible_os_family == "Debian"
   apt:
     pkg:
       - elasticsearch
+
+- name: setting repo(RedHat)
+  when:
+    - ansible_os_family == "RedHat"
+  template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode | default('0644')}}
+  with_items:
+    - {
+        src: elasticsearch.repo,
+        dest: "/etc/yum.repos.d/elasticsearch.repo",
+      }
+
+- name: install pakcage(RedHat)
+  when:
+    - ansible_os_family == "RedHat"
+  yum:
+    state: present
+    name:
+      - elasticsearch-7.12.0-1.x86_64
+      - java-1.8.0-openjdk
+      - java-1.8.0-openjdk-devel
 
 - name: copy templates
   template: src={{ item.src }} dest={{ item.dest }} mode={{ item.mode | default('0644')}}
