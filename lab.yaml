@@ -5,7 +5,7 @@
   roles:
     - { role: es, tags: es }
 
-- hosts: es
+- hosts: kibana
   gather_facts: yes
   become: yes
   roles:

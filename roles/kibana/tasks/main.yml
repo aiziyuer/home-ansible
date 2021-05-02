@@ -5,9 +5,19 @@
   with_items:
     - /etc/systemd/system
 
-- name: install pakcage
+- name: install pakcage(Debian)
+  when:
+    - ansible_os_family == "Debian"
   apt:
     pkg:
+      - kibana
+
+- name: install pakcage(RedHat)
+  when:
+    - ansible_os_family == "RedHat"
+  yum:
+    state: present
+    name:
       - kibana
 
 - name: copy templates
