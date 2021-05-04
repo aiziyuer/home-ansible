@@ -1,0 +1,17 @@
+---
+
+binaries:
+  centos:
+    name: centos.iso
+    versions:
+      "7":
+        name: centos7.iso
+        sha256sum: "e33d7b1ea7a9e2f38c8f693215dd85254c3a4fe446f93f563279715b68d07987"
+        url: "https://mirrors.aliyun.com/centos/7/isos/x86_64/CentOS-7-x86_64-DVD-2009.iso"
+  euler:
+    name: euler.iso
+    versions:
+      "2.3":
+        name: euler2sp3.iso
+        sha256sum: "8fac5a23851d8f8f27afd01a55f9a182701dcb321ef2ef3261d8c45e49d8efa0"
+        url: "https://repo.huaweicloud.com/euler/2.3/os/x86_64/iso/20180630/EulerOS-V2.0SP3-x86_64-dvd.iso"

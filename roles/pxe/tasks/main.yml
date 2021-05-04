@@ -1,20 +1,28 @@
 ---
+
+# /public 是nfs映射了远程pxe的文件服务器/public目录
+
 - name: ensures dirs
   file: path={{ item }} state=directory
   with_items:
-    - /tmp/repository/
-    - ~/iso-centos7
+    - /public/repository/
+    - ~/iso
 
 - name: download all
   shell: |
     while echo '{{ item.sha256sum }} {{ item.dest }}' | sha256sum --check --status &>/dev/null; [ $? -ne 0 ]; do 
-        curl -sSL {{ binaries_mirror }}/{{ item.sha256sum }} -o {{ item.dest }} || curl -sSL {{ item.url }} -o {{ item.dest }}; 
+        curl -sSLf {{ binaries_mirror }}/{{ item.sha256sum }} -o {{ item.dest }} || curl -sSLf {{ item.url }} -o {{ item.dest }}; 
     done
   with_items:
     - {
-        dest: "/tmp/repository/{{ binaries['centos']['name'] }}",
+        dest: "/public/repository/{{ binaries['centos']['versions']['7']['name'] | default(binaries['centos']['name']) }}",
         sha256sum: "{{ binaries['centos']['versions']['7']['sha256sum'] }}",
         url: "{{ binaries['centos']['versions']['7']['url'] }}",
+      }
+    - {
+        dest: "/public/repository/{{ binaries['euler']['versions']['2.3']['name'] | default(binaries['euler']['name']) }}",
+        sha256sum: "{{ binaries['euler']['versions']['2.3']['sha256sum'] }}",
+        url: "{{ binaries['euler']['versions']['2.3']['url'] }}",
       }
 
 - name: ensures dirs for templates
@@ -28,25 +36,26 @@
   when: item.state == 'file'
 
 - name: sync file for tempaltes
-  template: src={{ item.src }} dest="~/{{ item.path | regex_replace('\.j2$', '') }}" 
+  template: src={{ item.src }} dest="/public/{{ item.path | regex_replace('\.j2$', '') }}"
   with_filetree:
     - "../templates/"
   when: item.state == 'file'
 
 - name: sync file files
-  copy: src={{ item.src }} dest="~/{{ item.path }}" 
+  copy: src={{ item.src }} dest="/public/{{ item.path }}"
   with_filetree:
     - "../files/"
   when: item.state == 'file'
 
-- name: copy centos7 os
+- name: make os
   shell: |
-    umount ~/iso-centos7 || true
-    mount /tmp/repository/CentOS.iso ~/iso-centos7 || true
-    cp -pv ~/iso-centos7/images/pxeboot/{initrd.img,vmlinuz} ~/PXE-BOOT/os/centos7
-
-- name: rsync...
-  shell: |
-    rsync -avz ~/PXE-BOOT moyi@10.10.10.114:/volume1/public/
-    rsync -avz ~/iso-centos7 moyi@10.10.10.114:/volume1/public/
+    umount ~/iso || true
+    mount /public/repository/{{ item }}}}.iso ~/iso || true
+    cp -pv ~/iso/images/pxeboot/{initrd.img,vmlinuz} /public/PXE-BOOT/os/{{ item }}
+    mkdir -p /public/{{ item }}
+    rsync -avz ~/iso /public/{{ item }}
+    umount ~/iso
+  with_items:
+    - "{{ binaries['centos']['versions']['7']['name'] | default(binaries['centos']['name']) }}"
+    - "{{ binaries['euler']['versions']['2.3']['name'] | default(binaries['euler']['name']) }}"
 
