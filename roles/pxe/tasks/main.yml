@@ -50,10 +50,10 @@
 - name: make os
   shell: |
     umount ~/iso || true
-    mount /public/repository/{{ item }}}}.iso ~/iso || true
-    cp -pv ~/iso/images/pxeboot/{initrd.img,vmlinuz} /public/PXE-BOOT/os/{{ item }}
-    mkdir -p /public/{{ item }}
-    rsync -avz ~/iso /public/{{ item }}
+    mount /public/repository/{{ item }} ~/iso || true
+    cp -pv ~/iso/images/pxeboot/{initrd.img,vmlinuz} /public/PXE-BOOT/os/{{ item | regex_replace('\.iso$', '') }}
+    mkdir -p /public/{{ item | regex_replace('\.iso$', '') }}
+    rsync -avz ~/iso/ /public/{{ item | regex_replace('\.iso$', '') }}/
     umount ~/iso
   with_items:
     - "{{ binaries['centos']['versions']['7']['name'] | default(binaries['centos']['name']) }}"
