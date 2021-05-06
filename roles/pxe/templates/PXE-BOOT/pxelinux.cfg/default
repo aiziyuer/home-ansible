@@ -1,11 +1,11 @@
 default menu.c32
 prompt 0
 timeout 30
-menu Aiziyuer's Lab PXE
-label Install CentOS 7
+menu Title Aiziyuer's Lab PXE
+label Install CentOS 7(kernel-lt)
     kernel /os/centos7/vmlinuz
     append initrd=/os/centos7/initrd.img text noipv6 inst.ks=nfs:10.10.10.114:/volume1/public/PXE-BOOT/ks/centos7.cfg
-label Install EulerOS 2.3
+label Install EulerOS 2SP3
     kernel /os/euler2sp3/vmlinuz
     append initrd=/os/euler2sp3/initrd.img text noipv6 inst.ks=nfs:10.10.10.114:/volume1/public/PXE-BOOT/ks/euler2sp3.cfg
 

@@ -1,0 +1,11 @@
+---
+
+- name: ensures dirs
+  file: path={{ item }} state=directory
+  with_items:
+    - /public/repository/
+
+
+- name: sync repo
+
+
