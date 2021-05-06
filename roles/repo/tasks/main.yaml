@@ -1,11 +1,21 @@
 ---
-
 - name: ensures dirs
   file: path={{ item }} state=directory
   with_items:
-    - /public/repository/
+    - /mirrors/
 
+- name: sync file for tempaltes
+  template: src={{ item.src }} dest="/etc/yum.repos.d/{{ item.path | regex_replace('\.j2$', '') }}"
+  with_filetree:
+    - "../templates/"
+  when: item.state == 'file'
 
 - name: sync repo
-
-
+  shell: |
+    rsync -avz rsync://rsync.mirrors.ustc.edu.cn/repo/{{ item | regex_replace('(^/)|(/$)', '') }}/ /mirrors/{{ item | regex_replace('(^/)|(/$)', '') }}/
+    # rsync -az --info=progress2 rsync://rsync.mirrors.ustc.edu.cn/repo/{{ item | regex_replace('(^/)|(/$)', '') }}/ /mirrors/{{ item | regex_replace('(^/)|(/$)', '') }}/
+  with_items:
+    - /elrepo/kernel/el7/
+    - /epel/7/x86_64/
+    - /centos/7/os/x86_64/
+    - /kubernetes/yum/repos/kubernetes-el7-x86_64/
