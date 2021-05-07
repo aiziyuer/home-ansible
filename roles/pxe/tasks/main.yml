@@ -27,7 +27,7 @@
 
 - name: ensures dirs for templates
   file:
-    path: "{{ item.path | dirname }}"
+    path: "/public/{{ item.path | dirname }}"
     state: directory
     recurse: yes
   with_filetree:
