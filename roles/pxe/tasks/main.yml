@@ -20,9 +20,9 @@
         url: "{{ binaries['centos']['versions']['7']['url'] }}",
       }
     - {
-        dest: "/public/repository/{{ binaries['euler']['versions']['2.3']['name'] | default(binaries['euler']['name']) }}",
-        sha256sum: "{{ binaries['euler']['versions']['2.3']['sha256sum'] }}",
-        url: "{{ binaries['euler']['versions']['2.3']['url'] }}",
+        dest: "/public/repository/{{ binaries['euler']['versions']['2.2']['name'] | default(binaries['euler']['name']) }}",
+        sha256sum: "{{ binaries['euler']['versions']['2.2']['sha256sum'] }}",
+        url: "{{ binaries['euler']['versions']['2.2']['url'] }}",
       }
 
 - name: ensures dirs for templates
@@ -57,5 +57,5 @@
     umount ~/iso
   with_items:
     - "{{ binaries['centos']['versions']['7']['name'] | default(binaries['centos']['name']) }}"
-    - "{{ binaries['euler']['versions']['2.3']['name'] | default(binaries['euler']['name']) }}"
+    - "{{ binaries['euler']['versions']['2.2']['name'] | default(binaries['euler']['name']) }}"
 

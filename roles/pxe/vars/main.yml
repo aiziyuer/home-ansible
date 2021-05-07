@@ -11,7 +11,7 @@ binaries:
   euler:
     name: euler.iso
     versions:
-      "2.3":
-        name: euler2sp3.iso
-        sha256sum: "8fac5a23851d8f8f27afd01a55f9a182701dcb321ef2ef3261d8c45e49d8efa0"
-        url: "https://repo.huaweicloud.com/euler/2.3/os/x86_64/iso/20180630/EulerOS-V2.0SP3-x86_64-dvd.iso"
+      "2.2":
+        name: euler2sp2.iso
+        sha256sum: "173291aa3ed7fc5de5e8a2bc0ac9d81d644de7b0e76d6e90099badc986b2fe81"
+        url: "https://repo.huaweicloud.com/euler/2.2/os/x86_64/iso/20170930/EulerOS-V2.0SP2-x86_64-dvd.iso"
