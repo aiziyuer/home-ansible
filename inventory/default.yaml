@@ -1,4 +1,6 @@
 ---
+# 本文件中的密码已经经过ansible-vault加密，密码算子在~/.vault_password_file
+
 ros:
   hosts:
     MikroTik:
