@@ -24,6 +24,8 @@
         sha256sum: "{{ binaries['euler']['versions']['2.2']['sha256sum'] }}",
         url: "{{ binaries['euler']['versions']['2.2']['url'] }}",
       }
+  tags:
+    - dev
 
 - name: ensures dirs for templates
   file:
