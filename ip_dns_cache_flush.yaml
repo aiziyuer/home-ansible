@@ -1,23 +1,21 @@
 ---
 - name: RouterOS test with network_cli connection
   vars:
-    # 获取有效DNS地址
-    g_ddns_ip__synology: "{{ lookup('pipe', 'dig A @114.114.114.114 checkip.digitalocean.synology.com +short').split('\n') }}"
   hosts: ros
   gather_facts: false
   tasks:
-  - debug: var=g_ddns_ip__synology
-  - community.routeros.command:
-      commands:
-        - /ip firewall address-list add list=PASS address={{ item }}/32
-    with_items:
-      - "{{ g_ddns_ip__synology }}"
-  - community.routeros.command:
-      commands:
-        - /ip dns cache print without-paging
-    register: result
-  - debug: var=result.stdout_lines
-  - community.routeros.command:
-      commands:
-        - /ip dns cache flush
-
+    - community.routeros.command:
+        commands:
+          - /ip firewall address-list add list=PASS address={{ item }}/32
+      with_items:
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 checkip.digitalocean.synology.com +short ').split('\n') }}"
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 cloud2.mikrotik.com +short ').split('\n') }}"
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 static.hdslb.com +short ').split('\n') }}"
+    - community.routeros.command:
+        commands:
+          - /ip dns cache print without-paging
+      register: result
+    - debug: var=result.stdout_lines
+    - community.routeros.command:
+        commands:
+          - /ip dns cache flush
