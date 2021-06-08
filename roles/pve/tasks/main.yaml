@@ -1,0 +1,7 @@
+---
+- name: ensures etcd dirs
+  file: path={{ item }} state=directory
+  with_items:
+    - /etc/systemd/system
+
+
