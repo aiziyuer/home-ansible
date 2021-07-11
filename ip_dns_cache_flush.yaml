@@ -6,8 +6,17 @@
   tasks:
     - community.routeros.command:
         commands:
+          - /ip firewall address-list remove [find where list=PASS]
+    - community.routeros.command:
+        commands:
           - /ip firewall address-list add list=PASS address={{ item }}/32
       with_items:
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 ddns.synology.com +short ').split('\n') }}"
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 checkport.synology.com +short ').split('\n') }}"
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 checkip.synology.com +short ').split('\n') }}"
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 checkipv6.synology.com +short ').split('\n') }}"
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 account.synology.com +short ').split('\n') }}"
+        # - "{{ lookup('pipe', 'dig A @114.114.114.114 checkip.dyndns.org +short ').split('\n') }}" # 这条千万不能加，加了就走国外了。。。
         - "{{ lookup('pipe', 'dig A @114.114.114.114 checkip.digitalocean.synology.com +short ').split('\n') }}"
         - "{{ lookup('pipe', 'dig A @114.114.114.114 cloud2.mikrotik.com +short ').split('\n') }}"
         - "{{ lookup('pipe', 'dig A @114.114.114.114 static.hdslb.com +short ').split('\n') }}"
