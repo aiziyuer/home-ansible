@@ -5,3 +5,27 @@
     - /etc/systemd/system
 
 
+esxcfg-scsidevs -m
+
+
+vdq -iH
+
+
+nvme device get
+
+
+/opt/intel/isdct
+
+
+# listing drivers
+esxcli software vib list
+
+esxcli software vib list | grep iavmd
+
+ esxcli system module parameters set -m intel-nvme-vmd–parameter-string “logLevel=5”
+
+esxcli software vib install –v "/vmfs/volumes/6
+0cdcbe1-7a197871-6a19-d45d64d04ef9/Intel_VMD_ESXi_Signed_LED_Offline_Bundle/vib20/int-esx-intel-vmd-user/INT_bootbank_int-esx-intel-vmd-user_1.6-2.vib"
+
+esxcli software vib install -v /vmfs/volumes/datastore1/intel-nvme-vmd/VMW_bootbank_iavmd_2.0.0.1152-1vmw.702.0.0.178673
+51.vib
