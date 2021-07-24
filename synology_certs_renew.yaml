@@ -5,7 +5,7 @@
   gather_facts: false
   tasks:
     - shell: |
-        cat <<'EOF'>/tmp/synoloy_certs_renew.sh
+        cat <<'EOF'>/tmp/synology_certs_renew.sh
           execute() { echo "【command】 $@" ; eval "$@" ; }
           info() { echo "【info】 $@" ; }
 
@@ -41,9 +41,9 @@
           info 'check online certificates.'
           execute 'echo | openssl s_client -servername moyi-lc.com -connect 127.0.0.1:5001 2>/dev/null | openssl x509 -text'
         EOF
-        chmod +x /tmp/synoloy_certs_renew.sh
+        chmod +x /tmp/synology_certs_renew.sh
     - shell: |
-       sh /tmp/synoloy_certs_renew.sh | tee /tmp/synoloy_certs_renew.log
+       sh /tmp/synology_certs_renew.sh | tee /tmp/synology_certs_renew.log
       ignore_errors: false
       register: result
     - debug: var=result.stdout_lines
