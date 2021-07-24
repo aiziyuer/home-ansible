@@ -11,6 +11,7 @@
         commands:
           - /ip firewall address-list add list=PASS address={{ item }}/32
       with_items:
+        - "{{ lookup('pipe', 'dig A @114.114.114.114 dyndns.com +short ').split('\n') }}"
         - "{{ lookup('pipe', 'dig A @114.114.114.114 ddns.synology.com +short ').split('\n') }}"
         - "{{ lookup('pipe', 'dig A @114.114.114.114 checkport.synology.com +short ').split('\n') }}"
         - "{{ lookup('pipe', 'dig A @114.114.114.114 checkip.synology.com +short ').split('\n') }}"
