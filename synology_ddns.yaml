@@ -1,0 +1,30 @@
+---
+- name: Get Public IP From RouterOS
+  hosts: ros
+  vars:
+  gather_facts: true
+  tasks:
+    - community.routeros.command:
+        commands:
+          - :put [/ip address get [find where interface=pppoe-out1] value-name=address]
+      register: result
+    - set_fact:
+        public_ip: "{{ result.stdout_lines | last | last | regex_replace('^(?P<ip>.+)/(?P<mask>\\d+)$', '\\g<ip>') }}"
+    - debug: var=public_ip
+    - add_host:
+        name: "global"
+        public_ip: "{{ public_ip }}"
+
+- name: Set DDNS API
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - local_action:
+        module: shell
+        _raw_params: |
+          execute() { echo "【command】 $@" ; eval "$@" ; }
+          info() { echo "【info】 $@" ; }
+          execute 'chmod +x ./binaries/aliddns'
+          execute "./binaries/aliddns sync moyi-lc.com --ip='{{ hostvars['global']['public_ip'] }}' -rr='@' --access-key='{{ Ali_Key }}' --access-secret='{{ Ali_Secret }}'"
+      register: result
+    - debug: var=result.stdout_lines
