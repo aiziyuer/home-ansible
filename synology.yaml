@@ -5,43 +5,45 @@
   gather_facts: false
   tasks:
     - shell: |
-        execute() { echo "【command】 $@" ; eval "$@" ; }
-        info() { echo "【info】 $@" ; }
+        cat <<'EOF'>/tmp/synoloy_certs_renew.sh
+          execute() { echo "【command】 $@" ; eval "$@" ; }
+          info() { echo "【info】 $@" ; }
 
-        info 'renew certificates start ...'
-        execute 'curl https://get.acme.sh | sh -s -- force | true'
-        execute '~/.acme.sh/acme.sh --register-account -m 910217951@qq.com'
-        execute 'export Ali_Key="{{ Ali_Key }}"'
-        execute 'export Ali_Secret="{{ Ali_Secret }}"'
-        execute '~/.acme.sh/acme.sh --issue --dns dns_ali -d moyi-lc.com -d *.moyi-lc.com -d *.lab.moyi-lc.com -d *.home.moyi-lc.com --force'
-        info 'renew certificates done ...'
+          info 'renew certificates start ...'
+          execute 'curl https://get.acme.sh | sh -s -- force | true'
+          execute '~/.acme.sh/acme.sh --register-account -m 910217951@qq.com'
+          execute 'export Ali_Key="{{ Ali_Key }}"'
+          execute 'export Ali_Secret="{{ Ali_Secret }}"'
+          execute '~/.acme.sh/acme.sh --issue --dns dns_ali --force --dnssleep 0 -d moyi-lc.com -d *.moyi-lc.com -d *.a.moyi-lc.com -d *.b.moyi-lc.com -d *.lab.moyi-lc.com -d *.home.moyi-lc.com'
+          info 'renew certificates done ...'
 
-        info 'sync system default certificates start ...'
-        execute 'cp ~/.acme.sh/moyi-lc.com/moyi-lc.com.key /usr/syno/etc/certificate/system/default/privkey.pem'
-        execute 'cp ~/.acme.sh/moyi-lc.com/fullchain.cer /usr/syno/etc/certificate/system/default/fullchain.pem'
-        execute 'cp ~/.acme.sh/moyi-lc.com/moyi-lc.com.cer /usr/syno/etc/certificate/system/default/cert.pem'
-        info 'sync system default certificates done.'
+          info 'sync system default certificates start ...'
+          execute 'cp ~/.acme.sh/moyi-lc.com/moyi-lc.com.key /usr/syno/etc/certificate/system/default/privkey.pem'
+          execute 'cp ~/.acme.sh/moyi-lc.com/fullchain.cer /usr/syno/etc/certificate/system/default/fullchain.pem'
+          execute 'cp ~/.acme.sh/moyi-lc.com/moyi-lc.com.cer /usr/syno/etc/certificate/system/default/cert.pem'
+          info 'sync system default certificates done.'
 
-        # info 'sync ReverseProxy certificates start ...'
-        # for dir in /usr/syno/etc/certificate/ReverseProxy/*; do
-        #   execute "rsync -avz /usr/syno/etc/certificate/system/default/ $dir/"
-        # done
-        # info 'sync ReverseProxy certificates start ...'
+          # info 'sync ReverseProxy certificates start ...'
+          # for dir in /usr/syno/etc/certificate/ReverseProxy/*; do
+          #   execute "rsync -avz /usr/syno/etc/certificate/system/default/ $dir/"
+          # done
+          # info 'sync ReverseProxy certificates done.'
 
-        info 'restart synology services start ...'
-        execute '/usr/syno/sbin/synoservice --restart nginx'
-        execute '/usr/syno/sbin/synoservice --restart nmbd'
-        execute '/usr/syno/sbin/synoservice --restart avahi'
-        execute '/usr/syno/sbin/synoservice --reload ldap-server'
-        info 'restart synology services done.'
+          info 'restart synology services start ...'
+          execute '/usr/syno/sbin/synoservice --reload nginx' # 网页
+          execute '/usr/syno/sbin/synoservice --restart nmbd' # samba服务
+          execute '/usr/syno/sbin/synoservice --restart avahi' # 打印服务
+          execute '/usr/syno/sbin/synoservice --reload ldap-server' # 认证
+          info 'restart synology services done.'
 
-        info 'check local certificates.'
-        execute 'openssl x509 -text -in /usr/syno/etc/certificate/system/default/fullchain.pem'
-        info 'check online certificates.'
-        execute 'echo | openssl s_client -servername moyi-lc.com -connect moyi-lc.com:5001 2>/dev/null | openssl x509 -text'
-
-      args:
-        executable: /bin/bash
+          info 'check local certificates.'
+          execute 'openssl x509 -text -in /usr/syno/etc/certificate/system/default/fullchain.pem'
+          info 'check online certificates.'
+          execute 'echo | openssl s_client -servername moyi-lc.com -connect 127.0.0.1:5001 2>/dev/null | openssl x509 -text'
+        EOF
+        chmod +x /tmp/synoloy_certs_renew.sh
+    - shell: |
+       sh /tmp/synoloy_certs_renew.sh | tee /tmp/synoloy_certs_renew.log
       ignore_errors: false
       register: result
     - debug: var=result.stdout_lines
