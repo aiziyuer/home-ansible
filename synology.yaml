@@ -1,0 +1,37 @@
+---
+- name: Synology Certificates Renew With Cli
+  hosts: nas
+  become: true
+  gather_facts: false
+  tasks:
+    - shell: |
+        execute() { echo "【command】 $@" ; eval "$@" ; }
+        info() { echo "【info】 $@" ; }
+
+        info 'renew certificates start ...'
+        execute 'curl https://get.acme.sh | sh -s -- force | true'
+        execute '~/.acme.sh/acme.sh --register-account -m 910217951@qq.com'
+        execute 'export Ali_Key="{{ Ali_Key }}"'
+        execute 'export Ali_Secret="{{ Ali_Secret }}"'
+        execute '~/.acme.sh/acme.sh --issue --dns dns_ali -d moyi-lc.com -d *.moyi-lc.com --force'
+        info 'renew certificates done ...'
+
+        info 'sync certificates start ...'
+        execute 'cp ~/.acme.sh/moyi-lc.com/moyi-lc.com.key /usr/syno/etc/certificate/system/default/privkey.pem'
+        execute 'cp ~/.acme.sh/moyi-lc.com/fullchain.cer /usr/syno/etc/certificate/system/default/fullchain.pem'
+        execute 'cp ~/.acme.sh/moyi-lc.com/moyi-lc.com.cer /usr/syno/etc/certificate/system/default/cert.pem'
+        info 'sync certificates done.'
+
+        info 'restart synology services start ...'
+        execute '/usr/syno/sbin/synoservice --restart nginx'
+        execute '/usr/syno/sbin/synoservice --restart nmbd'
+        execute '/usr/syno/sbin/synoservice --restart avahi'
+        execute '/usr/syno/sbin/synoservice --reload ldap-server'
+        info 'restart synology services done.'
+
+      args:
+        executable: /bin/bash
+      ignore_errors: false
+      register: result
+    - debug: var=result.stdout_lines
+
