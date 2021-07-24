@@ -14,7 +14,7 @@
           execute '~/.acme.sh/acme.sh --register-account -m 910217951@qq.com'
           execute 'export Ali_Key="{{ Ali_Key }}"'
           execute 'export Ali_Secret="{{ Ali_Secret }}"'
-          execute '~/.acme.sh/acme.sh --issue --dns dns_ali --force --dnssleep 0 -d moyi-lc.com -d *.moyi-lc.com -d *.a.moyi-lc.com -d *.b.moyi-lc.com -d *.lab.moyi-lc.com -d *.home.moyi-lc.com'
+          execute '~/.acme.sh/acme.sh --issue --dns dns_ali --force --dnssleep 0 -d moyi-lc.com -d *.code.moyi-lc.com -d *.moyi-lc.com -d *.a.moyi-lc.com -d *.b.moyi-lc.com -d *.lab.moyi-lc.com -d *.home.moyi-lc.com'
           info 'renew certificates done ...'
 
           info 'sync system default certificates start ...'
@@ -23,11 +23,12 @@
           execute 'cp ~/.acme.sh/moyi-lc.com/moyi-lc.com.cer /usr/syno/etc/certificate/system/default/cert.pem'
           info 'sync system default certificates done.'
 
-          # info 'sync ReverseProxy certificates start ...'
-          # for dir in /usr/syno/etc/certificate/ReverseProxy/*; do
-          #   execute "rsync -avz /usr/syno/etc/certificate/system/default/ $dir/"
-          # done
-          # info 'sync ReverseProxy certificates done.'
+          # 非常必要, 切勿删减
+          info 'sync ReverseProxy certificates start ...'
+          for dir in /usr/syno/etc/certificate/ReverseProxy/*; do
+            execute "rsync -avz /usr/syno/etc/certificate/system/default/ $dir/"
+          done
+          info 'sync ReverseProxy certificates done.'
 
           info 'restart synology services start ...'
           execute '/usr/syno/sbin/synoservice --reload nginx' # 网页
@@ -39,7 +40,7 @@
           info 'check local certificates.'
           execute 'openssl x509 -text -in /usr/syno/etc/certificate/system/default/fullchain.pem'
           info 'check online certificates.'
-          execute 'echo | openssl s_client -servername moyi-lc.com -connect 127.0.0.1:5001 2>/dev/null | openssl x509 -text'
+          execute 'echo | openssl s_client -servername moyi-lc.com -connect 10.10.10.114:5001 2>/dev/null | openssl x509 -text'
         EOF
         chmod +x /tmp/synology_certs_renew.sh
     - shell: |
